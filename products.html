@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COCOPURE | Products</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f7f6ed;color:#174b35;font-family:Georgia,serif;text-align:center}
+header{background:#082f20;color:white;padding:25px;font-family:Arial,sans-serif}
+.logo{font-size:32px;letter-spacing:5px;font-weight:bold}
+.logo span{color:#a8d69b}
+h1{font-size:36px;margin:35px 10px 10px}
+.subtitle{color:#718074;font-size:17px}
+.products{max-width:700px;margin:25px auto;padding:0 18px}
+.card{background:white;border:1px solid #dce2d9;border-radius:18px;margin:25px 0;padding:22px 15px;box-shadow:0 3px 12px #0000000b;overflow:hidden}
+.photo{height:230px;width:100%;object-fit:cover;border-radius:12px;background:#e8eee5}
+h2{font-size:29px;margin:20px 0 8px}
+.desc{color:#829086;font-size:17px}
+.price{font-size:35px;font-weight:bold;margin:25px}
+.qty{font-size:22px;margin:18px}
+button{border:0;border-radius:8px;padding:17px 22px;margin:5px;font-size:16px;font-weight:bold}
+.add{background:#174b35;color:white}
+.cancel{background:#e5ece4;color:#174b35}
+.total{background:#e9f1e6;padding:35px 15px;margin-top:45px;border-radius:18px}
+.total small{font-size:18px}
+.total strong{display:block;font-size:48px;margin:15px}
+.proceed{background:#174b35;color:white;width:85%;max-width:450px;padding:22px;font-family:Georgia,serif;font-size:21px}
+footer{background:#082f20;color:white;padding:30px;margin-top:35px;font-size:20px}
+</style>
+</head>
+<body>
+<header><div class="logo">COCO<span>PURE</span></div></header>
+
+<h1>Our Natural Products</h1>
+<div class="subtitle">Freshness delivered to your doorstep</div>
+
+<div class="products">
+
+<div class="card">
+<img class="photo"
+src="https://images.pexels.com/photos/35296318/pexels-photo-35296318.jpeg?auto=compress&cs=tinysrgb&w=800"
+alt="Fresh green Kobbari Bondam">
+<h2>Kobbari Bondam</h2>
+<div class="desc">Fresh tender coconut</div>
+<div class="price">₹35</div>
+<div class="qty">Quantity: <span id="q0">0</span> / 20</div>
+<button class="add" onclick="change(0,1)">ADD +</button>
+<button class="cancel" onclick="change(0,-1)">CANCEL −</button>
+</div>
+
+<div class="card">
+<img class="photo" src="kaaya.jpg" alt="Brown mature Kobbari Kaaya">
+<h2>Kobbari Kaaya</h2>
+<div class="desc">Natural mature coconut</div>
+<div class="price">₹40</div>
+<div class="qty">Quantity: <span id="q1">0</span> / 20</div>
+<button class="add" onclick="change(1,1)">ADD +</button>
+<button class="cancel" onclick="change(1,-1)">CANCEL −</button>
+</div>
+
+<div class="card">
+<div style="height:230px;background:#e8eee5;border-radius:12px;display:flex;align-items:center;justify-content:center">
+<svg viewBox="0 0 120 210" style="height:200px;width:120px" role="img" aria-label="COCOPURE coconut water bottle">
+<rect x="43" y="3" width="34" height="22" rx="5" fill="#16833e"/>
+<path d="M42 25 L78 25 L78 43 Q92 52 92 70 L92 190 Q92 202 80 202 L40 202 Q28 202 28 190 L28 70 Q28 52 42 43Z" fill="#fff" stroke="#b4cbb5" stroke-width="3"/>
+<rect x="30" y="85" width="60" height="78" rx="5" fill="#e8f2d9"/>
+<text x="60" y="111" font-size="9" text-anchor="middle" fill="#145337" font-weight="bold">COCOPURE</text>
+<text x="60" y="127" font-size="8" text-anchor="middle" fill="#145337">Pure Coconut</text>
+<text x="60" y="138" font-size="8" text-anchor="middle" fill="#145337">Water</text>
+<text x="60" y="153" font-size="7" text-anchor="middle" fill="#145337">1 Litre</text>
+</svg>
+</div>
+<h2>Kobbari Neellu</h2>
+<div class="desc">Fresh coconut water · 1 litre</div>
+<div class="price">₹150</div>
+<div class="qty">Quantity: <span id="q2">0</span> / 10</div>
+<button class="add" onclick="change(2,1)">ADD +</button>
+<button class="cancel" onclick="change(2,-1)">CANCEL −</button>
+</div>
+
+<div class="total">
+<small>YOUR TOTAL AMOUNT</small>
+<strong id="total">₹0</strong>
+<button class="proceed" onclick="goOrder()">PROCEED TO ORDER →</button>
+</div>
+</div>
+
+<footer>COCOPURE<br>Pure Nature. Fresh Every Day.<br>Karimnagar, Telangana</footer>
+
+<script>
+/** @type {number[]} */
+let quantities = [0,0,0];
+
+/** @type {{name:string,price:number,max:number}[]} */
+const productsData = [
+{name:"Kobbari Bondam",price:35,max:20},
+{name:"Kobbari Kaaya",price:40,max:20},
+{name:"Kobbari Neellu",price:150,max:10}
+];
+
+try {
+  const saved = JSON.parse(localStorage.getItem("cocopureCart") || "null");
+  if(Array.isArray(saved) && saved.length === 3){
+    quantities = saved.map((value,index) => {
+      const number = Number(value);
+      if(!Number.isInteger(number)) return 0;
+      return Math.max(0,Math.min(productsData[index].max,number));
+    });
+  }
+} catch(error) {
+  quantities = [0,0,0];
+}
+
+/** @returns {number} */
+function totalAmount(){
+  return quantities.reduce((sum,q,index) => sum + q * productsData[index].price,0);
+}
+
+/** @returns {void} */
+function update(){
+  quantities.forEach((quantity,index) => {
+    document.getElementById("q"+index).textContent = String(quantity);
+  });
+  document.getElementById("total").textContent = "₹"+totalAmount();
+  localStorage.setItem("cocopureCart",JSON.stringify(quantities));
+}
+
+/**
+ * @param {number} index
+ * @param {number} amount
+ * @returns {void}
+ */
+function change(index,amount){
+  const next = quantities[index] + amount;
+  if(next < 0 || next > productsData[index].max) return;
+  quantities[index] = next;
+  update();
+}
+
+/** @returns {void} */
+function goOrder(){
+  if(totalAmount() === 0){
+    alert("Please add a product first.");
+    return;
+  }
+  window.location.href = "order.html";
+}
+
+update();
+</script>
+</body>
+</html>
